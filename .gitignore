@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Model checkpoints and training outputs
+ckpts/
+exps/
+
+# METEOR data (download separately)
+eval_func/cc/meteor/data/
