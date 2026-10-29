@@ -76,15 +76,15 @@ class CDEvalRunner(EvalRunner):
         return CDModel(args)
 
     def build_dataset(self, args):
-        # substring match over the whole --model_name, first hit wins ('clip' before 'dino')
-        backbone = next((b for b in ['clip', 'mae', 'dino'] if b in args.model_name), None)
+        # substring match over the whole --backbone, first hit wins ('clip' before 'dino')
+        backbone = next((b for b in ['clip', 'mae', 'dino'] if b in args.backbone), None)
 
         if backbone == 'dino':
             transform = transforms.DINOTransform()
         elif backbone in ('clip', 'mae'):
             transform = transforms.CLIPMAETransform(backbone)
         else:
-            raise ValueError(f'{args.model_name} Model not supported')
+            raise ValueError(f'{args.backbone} Model not supported')
 
         return Dataset(
             dataset=args.dataset,
@@ -111,7 +111,7 @@ if __name__ == '__main__':
                         help='run name, bs{batch_size}_{version}_r{rank} (e.g. bs16_small_r24)')
 
     # model
-    parser.add_argument('--model_name', type=str, required=True, help='backbone identifier')
+    parser.add_argument('--backbone', type=str, required=True, help='backbone identifier')
     parser.add_argument('--depth', type=int, default=1, help='number of encoder hook layers / change-encoder scales')
 
     # CAA adapter

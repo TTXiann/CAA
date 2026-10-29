@@ -5,7 +5,7 @@ from model.common.utils import weight_init
 
 
 class CDModel(BaseModel):
-    """Change detection model: decoder(x, y, *backbone(x, y)); the variant is picked from --model_name."""
+    """Change detection model: decoder(x, y, *backbone(x, y)); the variant is picked from --backbone."""
 
     _freeze_root = 'backbone'
 
@@ -18,10 +18,10 @@ class CDModel(BaseModel):
     }
 
     def __init__(self, args):
-        model_name, version = args.model_name.split('_')
+        model_name, version = args.backbone.split('_')
         super().__init__()
         if model_name not in self.VARIANTS:
-            raise ValueError(f'model_name is not supported: {args.model_name}')
+            raise ValueError(f'model_name is not supported: {args.backbone}')
         bb_cls = self.VARIANTS[model_name]
         rank = getattr(args, 'rank', 1)
         depth = getattr(args, 'depth', 1)

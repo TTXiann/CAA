@@ -33,22 +33,22 @@ class CDRunner(Runner):
         args.dataset = resolve_dataset_folder(self.dataset_alias)
 
     def version(self, args):
-        return model_version(args.model_name)
+        return model_version(args.backbone)
 
     def experiment_dir(self, args):
         return cd_exp_dir(args.save_root, self.dataset_alias, args.exp_dir,
                           args.rank, args.exp_name)
 
     def describe(self, args):
-        return (f'dataset={args.dataset} model={args.model_name} '
+        return (f'dataset={args.dataset} model={args.backbone} '
                 f'depth={args.depth} rank={args.rank}')
 
     def build_model(self, args):
         return CDModel(args)
 
     def build_datasets(self, args):
-        # substring match over the whole --model_name, first hit wins ('clip' before 'dino')
-        backbone = next((b for b in ['clip', 'mae', 'dino'] if b in args.model_name), None)
+        # substring match over the whole --backbone, first hit wins ('clip' before 'dino')
+        backbone = next((b for b in ['clip', 'mae', 'dino'] if b in args.backbone), None)
 
         if backbone == 'dino':
             train_dataset = Dataset(
@@ -73,7 +73,7 @@ class CDRunner(Runner):
                 transform=transforms.CLIPMAETransform(backbone),
                 root=args.data_folder)
         else:
-            raise ValueError(f'{args.model_name} Model not supported')
+            raise ValueError(f'{args.backbone} Model not supported')
 
         return train_dataset, test_dataset
 
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     parser.add_argument('--exp_dir', type=str, default='osnet', help='experiment group folder')
 
     # model
-    parser.add_argument('--model_name', type=str, required=True, help='backbone identifier')
+    parser.add_argument('--backbone', type=str, required=True, help='backbone identifier')
     parser.add_argument('--depth', type=int, default=1, help='number of encoder hook layers / change-encoder scales')
 
     # CAA adapter
